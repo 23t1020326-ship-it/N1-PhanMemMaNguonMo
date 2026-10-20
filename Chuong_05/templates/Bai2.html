@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Điểm Học Phần</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .grade-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        h2 {
+            color: #2b8a3e;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #40c057;
+            box-shadow: 0 0 0 3px rgba(64, 192, 87, 0.15);
+        }
+        .has-error input {
+            border-color: #fa5252 !important;
+        }
+        .error-message {
+            color: #fa5252;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #40c057;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2b8a3e;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #ebfbee;
+            border-left: 4px solid #40c057;
+            border-radius: 4px;
+            color: #2b8a3e;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grade-card">
+        <h2>Tính Điểm Học Phần</h2>
+        
+        <form method="POST" action="">
+            <!-- Chuyên cần -->
+            <div class="form-group {% if errors.cc %}has-error{% endif %}">
+                <label for="cc">Chuyên cần (10%):</label>
+                <input type="text" id="cc" name="cc" value="{{ values.get('cc', '') }}" placeholder="Nhập điểm từ 0 đến 10...">
+                {% if errors.cc %}
+                    <div class="error-message">{{ errors.cc }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Giữa kỳ -->
+            <div class="form-group {% if errors.gk %}has-error{% endif %}">
+                <label for="gk">Giữa kỳ (30%):</label>
+                <input type="text" id="gk" name="gk" value="{{ values.get('gk', '') }}" placeholder="Nhập điểm từ 0 đến 10...">
+                {% if errors.gk %}
+                    <div class="error-message">{{ errors.gk }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Cuối kỳ -->
+            <div class="form-group {% if errors.ck %}has-error{% endif %}">
+                <label for="ck">Cuối kỳ (60%):</label>
+                <input type="text" id="ck" name="ck" value="{{ values.get('ck', '') }}" placeholder="Nhập điểm từ 0 đến 10...">
+                {% if errors.ck %}
+                    <div class="error-message">{{ errors.ck }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit">Tính điểm</button>
+        </form>
+
+        <!-- Kết quả -->
+        {% if result is not none %}
+            <div class="result-box">
+                Mong đợi: {{ result }}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

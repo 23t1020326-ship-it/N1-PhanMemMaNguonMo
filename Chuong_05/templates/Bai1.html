@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máy Tính Cơ Bản</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .calculator-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        h2 {
+            color: #333333;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: #4c6ef5;
+            box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.15);
+        }
+        .has-error input, .has-error select {
+            border-color: #fa5252 !important;
+        }
+        .error-message {
+            color: #fa5252;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4c6ef5;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #3b5bdb;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e7f5ff;
+            border-left: 4px solid #339af0;
+            border-radius: 4px;
+            color: #1864ab;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-card">
+        <h2>Máy Tính Cơ Bản</h2>
+        
+        <form method="POST" action="">
+            <!-- Số thứ nhất a -->
+            <div class="form-group {% if errors.a %}has-error{% endif %}">
+                <label for="a">Số thứ nhất (a):</label>
+                <input type="text" id="a" name="a" value="{{ values.get('a', '') }}" placeholder="Nhập số a...">
+                {% if errors.a %}
+                    <div class="error-message">{{ errors.a }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Phép toán op -->
+            <div class="form-group {% if errors.op %}has-error{% endif %}">
+                <label for="op">Phép toán (op):</label>
+                <select id="op" name="op">
+                    <option value="+" {% if values.get('op') == '+' %}selected{% endif %}>+ (Cộng)</option>
+                    <option value="-" {% if values.get('op') == '-' %}selected{% endif %}>- (Trừ)</option>
+                    <option value="*" {% if values.get('op') == '*' %}selected{% endif %}>* (Nhân)</option>
+                    <option value="/" {% if values.get('op') == '/' %}selected{% endif %}>/ (Chia)</option>
+                </select>
+                {% if errors.op %}
+                    <div class="error-message">{{ errors.op }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Số thứ hai b -->
+            <div class="form-group {% if errors.b %}has-error{% endif %}">
+                <label for="b">Số thứ hai (b):</label>
+                <input type="text" id="b" name="b" value="{{ values.get('b', '') }}" placeholder="Nhập số b...">
+                {% if errors.b %}
+                    <div class="error-message">{{ errors.b }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit">Tính toán</button>
+        </form>
+
+        <!-- Kết quả -->
+        {% if result is not none %}
+            <div class="result-box">
+                Kết quả: {{ result }}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
