@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Quản lý{% endblock %}
+
+{% block content %}
+<h2>📊 Dashboard Tổng Quan</h2>
+
+<div class="card-grid">
+    <div class="card">
+        <h3>{{ total_categories }}</h3>
+        <p>Tổng số Danh mục</p>
+    </div>
+    <div class="card">
+        <h3>{{ total_books }}</h3>
+        <p>Tổng số Đầu sách</p>
+    </div>
+    <div class="card">
+        <h3>{{ "{:,.0f}".format(avg_price) }} đ</h3>
+        <p>Giá trung bình/sách</p>
+    </div>
+</div>
+
+<h3>📈 Thống kê số lượng sách theo Danh mục</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Tên Danh mục</th>
+            <th>Số lượng Sách hiện có</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cat_name, count in stats %}
+        <tr>
+            <td><strong>{{ cat_name }}</strong></td>
+            <td>{{ count }} cuốn</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

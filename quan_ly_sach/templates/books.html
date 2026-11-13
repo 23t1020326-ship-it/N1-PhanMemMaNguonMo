@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Quản lý Sách{% endblock %}
+
+{% block content %}
+<h2>📚 Quản lý Sách</h2>
+
+<!-- BỘ LỌC SÁCH THEO DANH MỤC -->
+<div style="margin-bottom: 20px;">
+    <form method="GET" action="{{ url_for('list_books') }}">
+        <label><strong>Lọc theo Danh mục:</strong></label>
+        <select name="category_id" onchange="this.form.submit()" style="width: auto; display: inline-block;">
+            <option value="">-- Tất cả danh mục --</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>
+                {{ cat.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+<!-- FORM THÊM SÁCH -->
+<form action="{{ url_for('add_book') }}" method="POST" style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+    <h3>Thêm Sách Mới</h3>
+    <div class="form-group" style="margin-top: 10px;">
+        <input type="text" name="title" placeholder="Tên sách..." required>
+    </div>
+    <div class="form-group">
+        <input type="text" name="author" placeholder="Tác giả..." required>
+    </div>
+    <div class="form-group">
+        <input type="number" name="price" placeholder="Giá tiền (VNĐ)..." step="1000" required>
+    </div>
+    <div class="form-group">
+        <select name="category_id" required>
+            <option value="">-- Chọn danh mục --</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>
+                {{ cat.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm Sách</button>
+</form>
+
+<!-- BẢNG DANH SÁCH SÁCH -->
+<h3 style="margin-top: 25px;">Danh sách Sách</h3>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Sách</th>
+            <th>Tác giả</th>
+            <th>Giá</th>
+            <th>Danh mục</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.id }}</td>
+            <td><strong>{{ book.title }}</strong></td>
+            <td>{{ book.author }}</td>
+            <td>{{ "{:,.0f}".format(book.price) }} đ</td>
+            <td>{{ book.category.name }}</td>
+            <td>
+                <form action="{{ url_for('delete_book', id=book.id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa sách này?');">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" style="text-align: center;">Chưa có sách nào trong danh mục này.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
