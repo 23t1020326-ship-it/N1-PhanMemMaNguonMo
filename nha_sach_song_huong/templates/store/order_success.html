@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Đặt hàng thành công #{{ order.id }} - Nhà sách Sông Hương{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm p-4 mx-auto" style="max-width: 760px;">
+    <div class="text-center mb-4">
+        <div class="text-success display-4 mb-2"><i class="bi bi-check-circle-fill"></i></div>
+        <h3 class="fw-bold">Đặt hàng thành công!</h3>
+        <p class="text-muted mb-1">
+            Mã đơn hàng của bạn là <strong class="text-primary">#{{ order.id }}</strong>
+            &middot; Trạng thái: <span class="badge bg-warning text-dark">{{ order.status }}</span>
+        </p>
+        <small class="text-muted">Thời gian đặt: {{ order.created_at.strftime("%d/%m/%Y %H:%M") }}</small>
+    </div>
+
+    <div class="bg-light rounded p-3 mb-4">
+        <h6 class="fw-bold mb-2">Thông tin nhận hàng</h6>
+        <p class="mb-1"><strong>Người nhận:</strong> {{ order.customer_name }} &middot; {{ order.customer_phone }}</p>
+        {% if order.customer_email %}
+            <p class="mb-1"><strong>Email:</strong> {{ order.customer_email }}</p>
+        {% endif %}
+        <p class="mb-1"><strong>Địa chỉ:</strong> {{ order.shipping_address }}</p>
+        <p class="mb-1"><strong>Thanh toán:</strong> {{ order.payment_method }}</p>
+        {% if order.note %}
+            <p class="mb-0"><strong>Ghi chú:</strong> {{ order.note }}</p>
+        {% endif %}
+    </div>
+
+    <h6 class="fw-bold mb-3">Chi tiết đơn hàng</h6>
+    <table class="table table-bordered align-middle mb-3">
+        <thead class="table-light">
+            <tr>
+                <th>Sách</th>
+                <th class="text-end">Đơn giá</th>
+                <th class="text-center">SL</th>
+                <th class="text-end">Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <td>{{ item.book.title }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(item.unit_price).replace(",", ".") }} đ</td>
+                <td class="text-center">{{ item.quantity }}</td>
+                <td class="text-end fw-semibold">{{ "{:,.0f}".format(item.unit_price * item.quantity).replace(",", ".") }} đ</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="ms-auto" style="width: 280px;">
+        <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">Tạm tính:</span>
+            <span>{{ "{:,.0f}".format(order.subtotal).replace(",", ".") }} đ</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+            <span class="text-muted">Phí giao hàng:</span>
+            <span>{{ "Miễn phí" if order.shipping_fee == 0 else "{:,.0f}".format(order.shipping_fee).replace(",", ".") + " đ" }}</span>
+        </div>
+        <div class="d-flex justify-content-between fs-5 fw-bold">
+            <span>Tổng cộng:</span>
+            <span class="text-danger">{{ "{:,.0f}".format(order.total_amount).replace(",", ".") }} đ</span>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 pt-3 border-top">
+        <a href="{{ url_for('store_books') }}" class="btn btn-primary px-4 fw-semibold">
+            &larr; Tiếp tục mua sách
+        </a>
+    </div>
+</div>
+{% endblock %}

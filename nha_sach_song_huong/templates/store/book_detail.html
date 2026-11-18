@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} - Nhà sách Sông Hương{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="{{ url_for('store_books') }}" class="text-decoration-none">Sách</a></li>
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('store_books', category_id=book.category_id) }}" class="text-decoration-none">
+                {{ book.category.name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ book.title }}</li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm p-4">
+    <div class="row g-4">
+        <!-- Cột trái: Ảnh bìa -->
+        <div class="col-md-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-center border overflow-hidden" style="height: 360px;">
+                {% if book.cover_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + book.cover_image) }}" alt="{{ book.title }}" class="w-100 h-100" style="object-fit: cover;">
+                {% else %}
+                    <span class="text-muted fs-5">Ảnh bìa</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Cột phải: Thông tin sách & Form chọn số lượng -->
+        <div class="col-md-8 d-flex flex-column">
+            <h3 class="fw-bold mb-2">{{ book.title }}</h3>
+            <p class="text-muted mb-3">
+                Tác giả: <strong class="text-dark">{{ book.author }}</strong>
+                {% if book.publisher or book.publish_year %}
+                    &middot; {{ book.publisher or '' }}{% if book.publisher and book.publish_year %}, {% endif %}{{ book.publish_year or '' }}
+                {% endif %}
+            </p>
+
+            <div class="fs-3 fw-bold text-danger mb-3">
+                {{ "{:,.0f}".format(book.price).replace(",", ".") }} đ
+            </div>
+
+            <p class="mb-2">Danh mục: <strong>{{ book.category.name }}</strong></p>
+
+            <p class="mb-3">
+                {% if book.stock > 0 %}
+                    <span class="text-success fw-semibold">&bull; Còn {{ book.stock }} cuốn</span>
+                {% else %}
+                    <span class="text-danger fw-semibold">&bull; Hết hàng</span>
+                {% endif %}
+            </p>
+
+            {% if book.description %}
+                <p class="text-secondary mb-4" style="white-space: pre-line;">{{ book.description }}</p>
+            {% endif %}
+
+            <!-- Form thêm vào giỏ hàng -->
+            {% if max_addable > 0 %}
+                <form method="POST" action="{{ url_for('store_cart_add', book_id=book.id) }}" class="mt-auto">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="next" value="{{ url_for('store_book_detail', book_id=book.id) }}">
+
+                    <label class="form-label fw-semibold">Số lượng</label>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="input-group" style="width: 140px;">
+                            <button type="button" class="btn btn-outline-primary fw-bold" onclick="changeQty(-1)">&minus;</button>
+                            <input type="number" id="qtyInput" name="quantity" class="form-control text-center fw-bold" value="1" min="1" max="{{ max_addable }}" required>
+                            <button type="button" class="btn btn-outline-primary fw-bold" onclick="changeQty(1)">+</button>
+                        </div>
+                        <small class="text-muted">
+                            tối đa {{ max_addable }}{% if current_in_cart > 0 %} (đã có {{ current_in_cart }} trong giỏ){% endif %}
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg px-4 fw-semibold">
+                        <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
+                    </button>
+                </form>
+            {% elif book.stock > 0 %}
+                <div class="mt-auto">
+                    <div class="alert alert-warning py-2 mb-3">
+                        Bạn đã thêm toàn bộ {{ book.stock }} cuốn hiện có của sách này vào giỏ hàng.
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-lg px-4 fw-semibold" disabled>Đã đạt giới hạn tồn kho</button>
+                </div>
+            {% else %}
+                <div class="mt-auto">
+                    <button type="button" class="btn btn-light text-muted border btn-lg px-4 fw-semibold" disabled>Hết hàng</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeQty(delta) {
+        const input = document.getElementById("qtyInput");
+        if (!input) return;
+        const min = parseInt(input.min) || 1;
+        const max = parseInt(input.max) || 1;
+        let current = parseInt(input.value) || 1;
+        let nextVal = current + delta;
+        if (nextVal < min) nextVal = min;
+        if (nextVal > max) nextVal = max;
+        input.value = nextVal;
+    }
+</script>
+{% endblock %}
